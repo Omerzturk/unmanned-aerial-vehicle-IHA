@@ -1,0 +1,47 @@
+alıcı ( uçak içindeki devre )
+
+servo 1 = d6
+
+servo 2 = d5
+
+servo 3 = d4
+
+servo 4 = d3
+
+esc yani motor = d10
+
+
+verici kumanda
+
+x yatay y dikey
+
+
+sol analog = ( a5=x , a6=y )
+
+sağ analog = ( a3=x , a4=y ) 
+
+
+
+
+
+not:
+
+eleveytor = yatay kuyruk
+
+radar = dikey kuyruk
+
+elron = kanatlar
+
+
+
+yapılacaklar: 
+
+sol analog yukarı ağaı yaptığında motor çalışıp kapanacak
+
+sol analog sağ sol yapttığında radar(dik kuyruk) sağ sol yapacak bu uçağın sağa sola dönüşüne yardımcı olacak
+
+sağ analog yukarı aşağı yaptığında eleveytor(kuyruk) yukarı aşağı yapacak bu uçağun burnunu yukarı kaldırıp indirmesini sağlayacak 
+
+sağ analog sağ sol yaptığında elron(kanatlar) kanatlardaki servolar zıt çalışacak bu uçağın sağa sola dönmesini sağlayacak
+
+

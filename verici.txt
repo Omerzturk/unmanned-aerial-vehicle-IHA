@@ -1,0 +1,102 @@
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <Servo.h>
+
+const uint64_t pipeOut = 0xE9E8F0F0E1LL;   //IMPORTANT: The same as in the receiver 0xE9E8F0F0E1LL
+
+RF24 radio(7, 8); // select CE,CSN pin
+
+
+
+Servo motor;
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+
+struct Signal {
+  byte motorSpeed;
+  byte servo1Angle;
+  byte servo2Angle;
+  byte servo3Angle;
+  byte servo4Angle;
+};
+
+Signal data;
+
+void ResetData() {
+  data.motorSpeed = 255;
+  data.servo1Angle = 90;
+  data.servo2Angle = 90;
+  data.servo3Angle = 90;
+  data.servo4Angle = 90;
+}
+
+void setup() {
+  radio.begin();
+  radio.openWritingPipe(pipeOut);
+  radio.stopListening();
+  ResetData();
+  
+  motor.attach(10);
+  servo1.attach(6);
+  servo2.attach(5);
+  servo3.attach(4);
+  servo4.attach(3);
+
+  motor.write(data.motorSpeed);
+  servo1.write(data.servo1Angle);
+  servo2.write(data.servo2Angle);
+  servo3.write(data.servo3Angle);
+  servo4.write(data.servo4Angle);
+
+  Serial.begin(9600);
+
+
+}
+
+int mapJoystickValues(int val, int lower, int middle, int upper, bool reverse) {
+  val = constrain(val, lower, upper);
+  if (val < middle)
+    val = map(val, lower, middle, 0, 128);
+  else
+    val = map(val, middle, upper, 128, 255);
+  return (reverse ? 255 - val : val);
+}
+
+void printData() {
+  Serial.print("Motor Speed: ");
+  Serial.print(data.motorSpeed);
+  Serial.print("\tsol Kanat Servo1: ");
+  Serial.print(data.servo1Angle);
+  Serial.print("\tsag Kanat Servo2: ");
+  Serial.print(255-data.servo2Angle);
+  Serial.print("\tarka dik Servo3: ");
+  Serial.print(data.servo3Angle);
+  Serial.print("\tarka yatay Servo4: ");
+  Serial.println(data.servo4Angle);
+}
+
+void loop() {
+
+
+
+  data.motorSpeed = mapJoystickValues(analogRead(A5), 12, 524, 1015, true);
+  data.servo1Angle = mapJoystickValues(analogRead(A4), 12, 524, 1020, true);
+  data.servo2Angle = mapJoystickValues(analogRead(A2), 12, 524, 1020, true);
+  data.servo3Angle = mapJoystickValues(analogRead(A6), 12, 524, 1020, true);
+  data.servo4Angle = mapJoystickValues(analogRead(A3), 12, 524, 1020, true);
+
+  motor.write(data.motorSpeed);
+  servo1.write(data.servo1Angle);
+  servo2.write(255-data.servo1Angle);
+  servo3.write(data.servo3Angle);
+  servo4.write(data.servo4Angle);
+
+  radio.write(&data, sizeof(Signal));
+  printData();
+
+
+
+}
